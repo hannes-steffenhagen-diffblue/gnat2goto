@@ -61,7 +61,7 @@ package body Driver is
    end GNAT_To_Goto;
 
    procedure Initialize_CProver_Internal_Variables (Start_Body : Irep) is
-      Int_32_T : constant Irep := Make_Signedbv_Type (Ireps.Empty, 32);
+      Int_32_T : constant Irep := Make_Signedbv_Type (Ireps.Empty, 8);
 
       procedure Initialize_CProver_Rounding_Mode;
       procedure Initialize_CProver_Rounding_Mode is
@@ -69,7 +69,7 @@ package body Driver is
            (I_Type => Int_32_T,
             Identifier => "__CPROVER_rounding_mode",
             Source_Location => No_Location);
-         Rounding_Mode_Val_Bits : constant String (1 .. 32) := (others => '0');
+         Rounding_Mode_Val_Bits : constant String (1 .. 8) := (others => '0');
          Rounding_Mode_Val : constant Irep := Make_Constant_Expr
            (I_Type => Int_32_T,
             Value => Rounding_Mode_Val_Bits,
@@ -322,7 +322,7 @@ package body Driver is
 
                begin
                   if Kind (Type_Irep) in Class_Bitvector_Type then
-                     Set_Width (Type_Irep, Integer (Esize_Width));
+                     Set_Width (Type_Irep, Integer (Esize_Width) / 4);
                   end if;
 
                   if Type_Kind = I_Floatbv_Type then
@@ -374,7 +374,7 @@ package body Driver is
          Global_Symbol_Table.Insert (Name, Sym);
       end Add_Global_Sym;
 
-      Int_32_T : constant Irep := Make_Signedbv_Type (Ireps.Empty, 32);
+      Int_32_T : constant Irep := Make_Signedbv_Type (Ireps.Empty, 8);
    begin
       Add_Global_Sym (Intern ("__CPROVER_rounding_mode"), Int_32_T);
    end Add_CProver_Internal_Symbols;

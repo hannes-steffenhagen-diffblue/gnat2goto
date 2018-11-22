@@ -17,6 +17,7 @@ package body Binary_To_Hex_Tests is
    end Do_Test_Suite;
 
    procedure Convert_0_Test;
+   procedure Convert_2_Test;
    procedure Convert_17_Test;
    procedure Convert_138_Test;
    procedure Convert_48879_Test;
@@ -25,6 +26,7 @@ package body Binary_To_Hex_Tests is
    begin
       Uintp.Initialize;
       Test_Util.Run_Test ("Converting 0", Convert_0_Test'Access);
+      Test_Util.Run_Test ("Converting 2", Convert_2_Test'Access);
       Test_Util.Run_Test ("Converting 17", Convert_17_Test'Access);
       Test_Util.Run_Test ("Converting 138", Convert_138_Test'Access);
       Test_Util.Run_Test ("Converting 48879", Convert_48879_Test'Access);
@@ -36,6 +38,14 @@ package body Binary_To_Hex_Tests is
    begin
       pragma Assert (Hex = "00000000");
    end Convert_0_Test;
+
+   procedure Convert_2_Test is
+      Binary : constant String := Convert_Uint_To_Binary
+        (Uint_2, 16);
+      Hex : constant String := Convert_Binary_To_Hex (Binary);
+   begin
+      pragma Assert (Hex = "0002");
+   end Convert_2_Test;
 
    procedure Convert_17_Test is
       Binary : constant String := Convert_Uint_To_Binary (Uint_1 + Uint_16, 8);

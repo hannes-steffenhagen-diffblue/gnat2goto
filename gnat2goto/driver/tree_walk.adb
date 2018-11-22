@@ -14,6 +14,7 @@ with GOTO_Utils;            use GOTO_Utils;
 with Uint_To_Binary;        use Uint_To_Binary;
 with Stand;
 with Ureal_To_Binary;       use Ureal_To_Binary;
+with Binary_To_Hex;         use Binary_To_Hex;
 with Ada.Text_IO;           use Ada.Text_IO;
 with Ada.Exceptions;
 
@@ -1178,7 +1179,7 @@ package body Tree_Walk is
          null;
       else
          if Kind (Constant_Resolved_Type) in Class_Bitvector_Type then
-            Constant_Width := Get_Width (Constant_Resolved_Type);
+            Constant_Width := Get_Width (Constant_Resolved_Type) * 4;
          else
             Report_Unhandled_Node_Empty (N, "Do_Constant",
                                   "Constant Type not in Class_Bitvector_Type");
@@ -1189,7 +1190,9 @@ package body Tree_Walk is
       Set_Source_Location (Ret, Sloc (N));
       Set_Type (Ret, Constant_Type);
       Set_Value (Ret,
-                 Convert_Uint_To_Binary (Intval (N), Pos (Constant_Width)));
+                 Convert_Binary_To_Hex
+                   (Convert_Uint_To_Binary
+                      (Intval (N), Pos (Constant_Width))));
       return Ret;
    end Do_Constant;
 
@@ -1212,7 +1215,8 @@ package body Tree_Walk is
       end if;
 
       begin
-         Set_Value (Ret, Convert_Ureal_To_Binary_IEEE (Realval (N)));
+         Set_Value (Ret, Convert_Binary_To_Hex
+                      (Convert_Ureal_To_Binary_IEEE (Realval (N))));
       exception
          when Error : others =>
             Report_Unhandled_Node_Empty (N, "Do_Real_Constant",
@@ -1340,8 +1344,9 @@ package body Tree_Walk is
             Set_Type (Member_Symbol_Init,
                       Make_Int_Type (Integer (Member_Size)));
             Set_Value (Member_Symbol_Init,
-                       Convert_Uint_To_Binary (Enumeration_Rep (Member),
-                                               Member_Size));
+                       Convert_Binary_To_Hex (Convert_Uint_To_Binary
+                                        (Enumeration_Rep (Member),
+                                               Member_Size)));
             Set_Op0 (Typecast_Expr, Member_Symbol_Init);
             Set_Type (Typecast_Expr, Enum_Type_Symbol);
             Member_Symbol.Value := Typecast_Expr;
