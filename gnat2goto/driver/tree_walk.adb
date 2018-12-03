@@ -1179,7 +1179,7 @@ package body Tree_Walk is
          null;
       else
          if Kind (Constant_Resolved_Type) in Class_Bitvector_Type then
-            Constant_Width := Get_Width (Constant_Resolved_Type) * 4;
+            Constant_Width := Get_Width (Constant_Resolved_Type);
          else
             Report_Unhandled_Node_Empty (N, "Do_Constant",
                                   "Constant Type not in Class_Bitvector_Type");
@@ -1188,7 +1188,7 @@ package body Tree_Walk is
       end if;
 
       Set_Source_Location (Ret, Sloc (N));
-      Set_Type (Ret, Constant_Type);
+      Set_Type (Ret, Constant_Resolved_Type);
       Set_Value (Ret,
                  Convert_Binary_To_Hex
                    (Convert_Uint_To_Binary
