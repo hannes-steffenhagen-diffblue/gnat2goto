@@ -2652,9 +2652,44 @@ package body Tree_Walk is
    -------------------------
 
    function Do_Op_Not (N : Node_Id) return Irep is
-      Boolean_Value : constant Irep := Do_Expression (Right_Opnd (N));
+      Value : constant Irep := Do_Expression (Right_Opnd (N));
+      Ret_Type : constant Irep := Do_Type_Reference (Etype (N));
+      Followed_Type : constant Irep :=
+        Follow_Symbol_Type (Ret_Type, Global_Symbol_Table);
+      Source_Loc : constant Source_Ptr := Sloc (N);
    begin
-      return Make_Op_Not (Boolean_Value, Sloc (N), Make_Bool_Type);
+      if Kind (Followed_Type) = I_Ada_Mod_Type then
+         declare
+            --  In case the not-operator (not X) is called on a modular-type
+            --  (mod Y) variable the result should be: (Y-1)-X
+            Mod_Max_String : constant String :=
+              Get_Ada_Mod_Max (Followed_Type);
+            Mod_Max : constant Irep :=
+              Make_Constant_Expr (Source_Location => Source_Loc,
+                                  I_Type          => Ret_Type,
+                                  Range_Check     => False,
+                                  Value           => Mod_Max_String);
+            One : constant Irep :=
+              Make_Constant_Expr (Source_Location => Source_Loc,
+                                  I_Type          => Ret_Type,
+                                  Range_Check     => False,
+                                  Value           => "1");
+            Mod_Max_Value : constant Irep :=
+              Make_Op_Sub (Rhs             => One,
+                           Lhs             => Mod_Max,
+                           Source_Location => Source_Loc,
+                           Overflow_Check  => False,
+                           I_Type          => Ret_Type);
+         begin
+            return Make_Op_Sub (Rhs             => Value,
+                                Lhs             => Mod_Max_Value,
+                                Source_Location => Source_Loc,
+                                Overflow_Check  => False,
+                                I_Type          => Ret_Type);
+         end;
+      end if;
+
+      return Make_Op_Not (Value, Source_Loc, Make_Bool_Type);
    end Do_Op_Not;
 
    -------------------------
