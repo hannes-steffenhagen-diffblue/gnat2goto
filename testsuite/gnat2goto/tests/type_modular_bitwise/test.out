@@ -1,6 +1,5 @@
 [1] file modular_type.adb line 7 assertion: SUCCESS
-[2] file modular_type.adb line 12 assertion: SUCCESS
-[3] file modular_type.adb line 14 assertion: SUCCESS
-[4] file modular_type.adb line 16 assertion: SUCCESS
-[5] file modular_type.adb line 18 assertion: SUCCESS
+[2] file modular_type.adb line 8 assertion: SUCCESS
+[3] file modular_type.adb line 9 assertion: SUCCESS
+[4] file modular_type.adb line 10 assertion: SUCCESS
 VERIFICATION SUCCESSFUL
